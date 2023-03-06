@@ -7,4 +7,3 @@ gasreport-*
 node_modules
 build
 forge-cache
-out!/.env.lamb
