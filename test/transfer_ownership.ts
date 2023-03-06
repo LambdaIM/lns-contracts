@@ -11,15 +11,12 @@ async function main() {
     owner,
   )
 
-  // lambda.eth
-  const name = 'lambda'
+  // test.lamb
+  const name = 'test'
   const label = '0x' + keccak256(utils.toUtf8Bytes(name))
   const tokenId = ethers.BigNumber.from(label)
-  const oldOwner = '0x70997970C51812dc3A010C7d01b50e0d17dc79C8'
-  // const oldOwner = await registrar['ownerOf(uint256)'](tokenId)
-  // console.log(
-  //     `The owner of NFT from ${name} is ${oldOwner}`
-  // )
+  const oldOwner = await registrar['ownerOf(uint256)'](tokenId)
+  console.log(`The owner of NFT from ${name} is ${oldOwner}`)
 
   const expires = await registrar.nameExpires(tokenId)
   const timestamp = ethers.BigNumber.from(expires).toNumber()
@@ -38,10 +35,8 @@ async function main() {
   )
   await tx.wait()
 
-  // const newOwner = await registrar.ownerOf(tokenId)
-  // console.log(
-  //     `The new owner of NFT which from ${name} is ${newOwner}`
-  // )
+  const newOwner = await registrar.ownerOf(tokenId)
+  console.log(`The new owner of NFT which from ${name} is ${newOwner}`)
 }
 
 main()

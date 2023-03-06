@@ -7,7 +7,7 @@ import "@ensdomains/buffer/contracts/Buffer.sol";
 import "../dnssec-oracle/BytesUtils.sol";
 import "../dnssec-oracle/DNSSEC.sol";
 import "../dnssec-oracle/RRUtils.sol";
-import "../registry/ENSRegistry.sol";
+import "../registry/LNSRegistry.sol";
 import "../root/Root.sol";
 import "../resolvers/profiles/AddrResolver.sol";
 import "./DNSClaimChecker.sol";
@@ -23,7 +23,7 @@ contract DNSRegistrar is IDNSRegistrar, IERC165 {
     using Buffer for Buffer.buffer;
     using RRUtils for *;
 
-    ENS public immutable ens;
+    LNS public immutable ens;
     DNSSEC public immutable oracle;
     PublicSuffixList public suffixes;
     address public immutable previousRegistrar;
@@ -57,7 +57,7 @@ contract DNSRegistrar is IDNSRegistrar, IERC165 {
         address _resolver,
         DNSSEC _dnssec,
         PublicSuffixList _suffixes,
-        ENS _ens
+        LNS _ens
     ) {
         previousRegistrar = _previousRegistrar;
         resolver = _resolver;

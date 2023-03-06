@@ -5,7 +5,7 @@ async function main() {
   const { getNamedAccounts } = require('hardhat')
   const { owner } = await getNamedAccounts()
 
-  const controller = await ethers.getContract('ETHRegistrarController', owner)
+  const controller = await ethers.getContract('LAMBRegistrarController', owner)
   const before = await controller.provider.getBalance(controller.address)
   console.log(`Controller's balance: ${utils.formatEther(before)}`)
   const tx = await controller.withdraw()

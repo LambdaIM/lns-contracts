@@ -5,8 +5,8 @@ async function main() {
   const { getNamedAccounts } = require('hardhat')
   const { owner } = await getNamedAccounts()
 
-  const registry = await ethers.getContract('ENSRegistry', owner)
-  const domain = 'lambda.eth'
+  const registry = await ethers.getContract('LNSRegistry', owner)
+  const domain = 'test.lamb'
   const ttl = await registry.ttl(namehash(domain))
   console.log(`TTL of ${domain} is ${ttl}`)
 }

@@ -12,7 +12,7 @@ function computeInterfaceId(iface: Interface) {
 }
 
 const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
-  const { getNamedAccounts, deployments, network } = hre
+  const { getNamedAccounts, deployments } = hre
   const { deploy } = deployments
   const { deployer, owner } = await getNamedAccounts()
 
@@ -23,19 +23,13 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
   const priceOracle = await ethers.getContract('StablePriceOracle', owner)
   const reverseRegistrar = await ethers.getContract('ReverseRegistrar', owner)
 
-  let minAge = 60
-  let maxAge = 86400
-  if (network.name === 'localhost') {
-    minAge = 2
-    maxAge = 4
-  }
-  const controller = await deploy('ETHRegistrarController', {
+  const controller = await deploy('LAMBRegistrarController', {
     from: deployer,
     args: [
       registrar.address,
       priceOracle.address,
-      minAge,
-      maxAge,
+      60,
+      86400,
       reverseRegistrar.address,
     ],
     log: true,
@@ -43,42 +37,42 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
   if (!controller.newlyDeployed) return
 
   if (owner !== deployer) {
-    const c = await ethers.getContract('ETHRegistrarController', deployer)
+    const c = await ethers.getContract('LAMBRegistrarController', deployer)
     const tx = await c.transferOwnership(owner)
     console.log(
-      `Transferring ownership of ETHRegistrarController to ${owner} (tx: ${tx.hash})...`,
+      `Transferring ownership of LAMBRegistrarController to ${owner} (tx: ${tx.hash})...`,
     )
     await tx.wait()
   }
 
   const tx1 = await reverseRegistrar.setController(controller.address, true)
   console.log(
-    `Adding ETHRegistrarController as a controller of ReverseRegistrar (tx: ${tx1.hash})...`,
+    `Adding LAMBRegistrarController as a controller of ReverseRegistrar (tx: ${tx1.hash})...`,
   )
   await tx1.wait()
 
   const tx2 = await registrar.addController(controller.address)
   console.log(
-    `Adding ETHRegistrarController as controller on registrar (tx: ${tx2.hash})...`,
+    `Adding LAMBRegistrarController as controller on registrar (tx: ${tx2.hash})...`,
   )
   await tx2.wait()
 
-  const artifact = await deployments.getArtifact('IETHRegistrarController')
+  const artifact = await deployments.getArtifact('ILAMBRegistrarController')
   const interfaceId = computeInterfaceId(new Interface(artifact.abi))
   const provider = new ethers.providers.StaticJsonRpcProvider(
     ethers.provider.connection.url,
     {
       ...ethers.provider.network,
-      ensAddress: (await ethers.getContract('ENSRegistry')).address,
+      ensAddress: (await ethers.getContract('LNSRegistry')).address,
     },
   )
   const resolver = await provider.getResolver('lamb')
   if (resolver === null) {
     console.log(
-      'No resolver set for .lamb; not setting interface for ETH Registrar Controller',
+      'No resolver set for .lamb; not setting interface for LAMB Registrar Controller',
     )
     console.log(
-      `ETHRegistrarController deployed at (addr: ${controller.address})`,
+      `LAMBRegistrarController deployed at (addr: ${controller.address})`,
     )
     return
   }
@@ -92,18 +86,18 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
     controller.address,
   )
   console.log(
-    `Setting ETHRegistrarController interface ID ${interfaceId} on .lamb resolver (tx: ${tx3.hash})...`,
+    `Setting LAMBRegistrarController interface ID ${interfaceId} on .lamb resolver (tx: ${tx3.hash})...`,
   )
   await tx3.wait()
   console.log(
-    `ETHRegistrarController deployed at (addr: ${controller.address})`,
+    `LAMBRegistrarController deployed at (addr: ${controller.address})`,
   )
 }
 
 func.id = 'controller'
 func.tags = ['RegistrarController']
 func.dependencies = [
-  'ENSRegistry',
+  'LNSRegistry',
   'BaseRegistrarImplementation',
   'StablePriceOracle',
   'ReverseRegistrar',

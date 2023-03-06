@@ -12,7 +12,7 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
   const { deploy } = deployments
   const { deployer, owner } = await getNamedAccounts()
 
-  const registry = await ethers.getContract('ENSRegistry')
+  const registry = await ethers.getContract('LNSRegistry')
   const reverseRegistrar = await deploy('ReverseRegistrar', {
     from: deployer,
     args: [registry.address],

@@ -1,6 +1,6 @@
 pragma solidity >=0.8.4;
 
-import "../registry/ENS.sol";
+import "../registry/LNS.sol";
 import "./IBaseRegistrar.sol";
 import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
@@ -9,13 +9,12 @@ contract BaseRegistrarImplementation is ERC721, IBaseRegistrar, Ownable {
     // A map of expiry times
     mapping(uint256 => uint256) expiries;
     // The ENS registry
-    ENS public ens;
-    // The namehash of the TLD this registrar owns (eg, .eth)
+    LNS public lns;
+    // The namehash of the TLD this registrar owns (eg, .lamb)
     bytes32 public baseNode;
     // A map of addresses that are authorised to register and renew names.
     mapping(address => bool) public controllers;
-    //    uint256 public constant GRACE_PERIOD = 90 days;
-    uint256 public constant GRACE_PERIOD = 60 seconds;
+    uint256 public constant GRACE_PERIOD = 90 days;
     bytes4 private constant INTERFACE_META_ID =
         bytes4(keccak256("supportsInterface(bytes4)"));
     bytes4 private constant ERC721_ID =
@@ -52,13 +51,13 @@ contract BaseRegistrarImplementation is ERC721, IBaseRegistrar, Ownable {
             isApprovedForAll(owner, spender));
     }
 
-    constructor(ENS _ens, bytes32 _baseNode) ERC721("", "") {
-        ens = _ens;
+    constructor(LNS _lns, bytes32 _baseNode) ERC721("", "") {
+        lns = _lns;
         baseNode = _baseNode;
     }
 
     modifier live() {
-        require(ens.owner(baseNode) == address(this));
+        require(lns.owner(baseNode) == address(this));
         _;
     }
 
@@ -94,7 +93,7 @@ contract BaseRegistrarImplementation is ERC721, IBaseRegistrar, Ownable {
 
     // Set the resolver for the TLD this registrar manages.
     function setResolver(address resolver) external override onlyOwner {
-        ens.setResolver(baseNode, resolver);
+        lns.setResolver(baseNode, resolver);
     }
 
     // Returns the expiration timestamp of the specified id.
@@ -155,7 +154,7 @@ contract BaseRegistrarImplementation is ERC721, IBaseRegistrar, Ownable {
         }
         _mint(owner, id);
         if (updateRegistry) {
-            ens.setSubnodeOwner(baseNode, bytes32(id), owner);
+            lns.setSubnodeOwner(baseNode, bytes32(id), owner);
         }
 
         emit NameRegistered(id, owner, block.timestamp + duration);
@@ -182,7 +181,7 @@ contract BaseRegistrarImplementation is ERC721, IBaseRegistrar, Ownable {
      */
     function reclaim(uint256 id, address owner) external override live {
         require(_isApprovedOrOwner(msg.sender, id));
-        ens.setSubnodeOwner(baseNode, bytes32(id), owner);
+        lns.setSubnodeOwner(baseNode, bytes32(id), owner);
     }
 
     function supportsInterface(

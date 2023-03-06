@@ -12,7 +12,7 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
   const { deploy } = deployments
   const { deployer, owner } = await getNamedAccounts()
 
-  const registry = await ethers.getContract('ENSRegistry')
+  const registry = await ethers.getContract('LNSRegistry')
   const bri = await deploy('BaseRegistrarImplementation', {
     from: deployer,
     args: [registry.address, namehash('lamb')],
@@ -50,7 +50,7 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
     .connect(await ethers.getSigner(owner))
     .setSubnodeOwner(ZERO_HASH, '0x' + keccak256('lamb'), registrar.address)
   console.log(
-    `Setting owner of eth node to registrar on registry (tx: ${tx2.hash})...`,
+    `Setting owner of lamb node to registrar on registry (tx: ${tx2.hash})...`,
   )
   await tx2.wait()
 

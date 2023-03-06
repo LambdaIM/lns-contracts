@@ -3,7 +3,7 @@ pragma solidity ^0.8.0;
 
 import "@openzeppelin/contracts/access/Ownable.sol";
 
-contract LambPriceOracle is Ownable {
+contract LAMBPriceOracle is Ownable {
     int256 value;
 
     constructor(int256 _value) {

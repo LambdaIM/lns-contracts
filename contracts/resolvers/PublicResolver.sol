@@ -1,7 +1,7 @@
 //SPDX-License-Identifier: MIT
 pragma solidity >=0.8.17 <0.9.0;
 
-import "../registry/ENS.sol";
+import "../registry/LNS.sol";
 import "./profiles/ABIResolver.sol";
 import "./profiles/AddrResolver.sol";
 import "./profiles/ContentHashResolver.sol";
@@ -29,7 +29,7 @@ contract PublicResolver is
     TextResolver,
     ExtendedResolver
 {
-    ENS immutable ens;
+    LNS immutable lns;
     address immutable trustedETHController;
     address immutable trustedReverseRegistrar;
 
@@ -66,11 +66,11 @@ contract PublicResolver is
     );
 
     constructor(
-        ENS _ens,
+        LNS _lns,
         address _trustedETHController,
         address _trustedReverseRegistrar
     ) {
-        ens = _ens;
+        lns = _lns;
         trustedETHController = _trustedETHController;
         trustedReverseRegistrar = _trustedReverseRegistrar;
     }
@@ -126,7 +126,7 @@ contract PublicResolver is
         ) {
             return true;
         }
-        address owner = ens.owner(node);
+        address owner = lns.owner(node);
         return
             owner == msg.sender ||
             isApprovedForAll(owner, msg.sender) ||

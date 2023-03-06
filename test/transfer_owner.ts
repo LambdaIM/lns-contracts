@@ -4,9 +4,9 @@ import { namehash } from 'ethers/lib/utils'
 async function main() {
   const { getNamedAccounts } = require('hardhat')
   const { deployer, owner } = await getNamedAccounts()
-  const registry = await ethers.getContract('ENSRegistry', owner)
+  const registry = await ethers.getContract('LNSRegistry', owner)
 
-  const name = 'lambda.eth'
+  const name = 'test.lamb'
   const oldOwner = await registry.owner(namehash(name))
   console.log(`The owner of ${name} is ${oldOwner}`)
   const tx = await registry.setOwner(namehash(name), deployer)

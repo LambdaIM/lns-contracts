@@ -5,11 +5,11 @@ import { utils } from 'ethers'
 const DAY = 60 * 60 * 24
 
 async function main() {
-  const { getNamedAccounts, network } = require('hardhat')
+  const { getNamedAccounts } = require('hardhat')
   const { owner } = await getNamedAccounts()
-  const controller = await ethers.getContract('ETHRegistrarController', owner)
+  const controller = await ethers.getContract('LAMBRegistrarController', owner)
   const resolver = await ethers.getContract('PublicResolver', owner)
-  const name = 'lambda'
+  const name = 'test'
   if (!(await controller.available(name))) {
     console.error(`The name ${name} is unavailable`)
     return
@@ -17,9 +17,6 @@ async function main() {
   console.log(`The name ${name} is available`)
 
   let duration = 30 * DAY
-  if (network.name === 'localhost') {
-    duration = 61
-  }
   const price = await controller.rentPrice(name, duration)
   console.log(`[price] base: ${price.base} premium: ${price.premium}`)
   const random = new Uint8Array(32)
@@ -43,27 +40,21 @@ async function main() {
   await tx.wait()
   console.log(`First step complete, next...`)
 
-  let taskDelay = 61000
-  let exitDelay = 70000
-  if (network.name === 'localhost') {
-    taskDelay = 3000
-    exitDelay = 5000
-  }
   setTimeout(async () => {
     const tx1 = await controller.register(
       name,
-      owner.toString(),
+      owner,
       duration,
       secret,
       resolver.address,
       false,
-      { value: utils.parseEther('5') },
+      { value: utils.parseEther('200') },
     )
     console.log(`Registering ${name} to ${owner} (tx: ${tx1.hash})...`)
     await tx1.wait()
-  }, taskDelay)
+  }, 61000)
 
-  await sleep(exitDelay)
+  await sleep(70000)
 }
 
 function sleep(ms: number | undefined) {

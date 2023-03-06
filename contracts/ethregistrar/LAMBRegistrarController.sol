@@ -5,7 +5,7 @@ import {BaseRegistrarImplementation} from "./BaseRegistrarImplementation.sol";
 import {StringUtils} from "./StringUtils.sol";
 import {Resolver} from "../resolvers/Resolver.sol";
 import {ReverseRegistrar} from "../registry/ReverseRegistrar.sol";
-import {IETHRegistrarController, IPriceOracle} from "./IETHRegistrarController.sol";
+import {ILAMBRegistrarController, IPriceOracle} from "./ILAMBRegistrarController.sol";
 
 import {Ownable} from "@openzeppelin/contracts/access/Ownable.sol";
 import {IERC165} from "@openzeppelin/contracts/utils/introspection/IERC165.sol";
@@ -26,19 +26,18 @@ error MaxCommitmentAgeTooHigh();
 /**
  * @dev A registrar controller for registering and renewing names at fixed cost.
  */
-contract ETHRegistrarController is
+contract LAMBRegistrarController is
     Ownable,
-    IETHRegistrarController,
+    ILAMBRegistrarController,
     IERC165,
     ERC20Recoverable
 {
     using StringUtils for *;
     using Address for address;
 
-    //    uint256 public constant MIN_REGISTRATION_DURATION = 28 days;
-    uint256 public constant MIN_REGISTRATION_DURATION = 60 seconds;
-    bytes32 private constant ETH_NODE =
-        0x93cdeb708b7545dc668eb9280176169d1c33cfd8ed6f04690a0bcc88a93fc4ae;
+    uint256 public constant MIN_REGISTRATION_DURATION = 28 days;
+    bytes32 private constant LAMB_NODE =
+        0x94fe09c42f3cc4d92a3d94f59093548f133b5a0028bf44e896742ab221365109;
     uint64 private constant MAX_EXPIRY = type(uint64).max;
     BaseRegistrarImplementation immutable base;
     IPriceOracle public immutable prices;
@@ -193,7 +192,7 @@ contract ETHRegistrarController is
         expires = base.register(tokenId, address(this), duration);
 
         bytes32 nodehash = keccak256(abi.encodePacked(base.baseNode(), label));
-        base.ens().setResolver(nodehash, resolver);
+        base.lns().setResolver(nodehash, resolver);
         if (owner != address(0)) {
             Resolver(resolver).setAddr(nodehash, owner);
         }
@@ -229,7 +228,7 @@ contract ETHRegistrarController is
     ) external pure returns (bool) {
         return
             interfaceID == type(IERC165).interfaceId ||
-            interfaceID == type(IETHRegistrarController).interfaceId;
+            interfaceID == type(ILAMBRegistrarController).interfaceId;
     }
 
     /* Internal functions */
@@ -264,8 +263,8 @@ contract ETHRegistrarController is
         bytes32 label,
         bytes[] calldata data
     ) internal {
-        // use hardcoded .eth namehash
-        bytes32 nodehash = keccak256(abi.encodePacked(ETH_NODE, label));
+        // use hardcoded .lamb namehash
+        bytes32 nodehash = keccak256(abi.encodePacked(LAMB_NODE, label));
         Resolver resolver = Resolver(resolverAddress);
         resolver.multicallWithNodeCheck(nodehash, data);
     }
@@ -279,7 +278,7 @@ contract ETHRegistrarController is
             msg.sender,
             owner,
             resolver,
-            string.concat(name, ".eth")
+            string.concat(name, ".lamb")
         );
     }
 }

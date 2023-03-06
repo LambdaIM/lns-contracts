@@ -1,9 +1,9 @@
 //SPDX-License-Identifier: MIT
 pragma solidity ~0.8.17;
 
-import "../registry/ENS.sol";
-import "./ETHRegistrarController.sol";
-import "./IETHRegistrarController.sol";
+import "../registry/LNS.sol";
+import "./LAMBRegistrarController.sol";
+import "./ILAMBRegistrarController.sol";
 import "../resolvers/Resolver.sol";
 import "./IBulkRenewal.sol";
 import "./IPriceOracle.sol";
@@ -14,19 +14,19 @@ contract BulkRenewal is IBulkRenewal {
     bytes32 private constant ETH_NAMEHASH =
         0x93cdeb708b7545dc668eb9280176169d1c33cfd8ed6f04690a0bcc88a93fc4ae;
 
-    ENS public immutable ens;
+    LNS public immutable ens;
 
-    constructor(ENS _ens) {
+    constructor(LNS _ens) {
         ens = _ens;
     }
 
-    function getController() internal view returns (ETHRegistrarController) {
+    function getController() internal view returns (LAMBRegistrarController) {
         Resolver r = Resolver(ens.resolver(ETH_NAMEHASH));
         return
-            ETHRegistrarController(
+            LAMBRegistrarController(
                 r.interfaceImplementer(
                     ETH_NAMEHASH,
-                    type(IETHRegistrarController).interfaceId
+                    type(ILAMBRegistrarController).interfaceId
                 )
             );
     }
@@ -35,7 +35,7 @@ contract BulkRenewal is IBulkRenewal {
         string[] calldata names,
         uint256 duration
     ) external view override returns (uint256 total) {
-        ETHRegistrarController controller = getController();
+        LAMBRegistrarController controller = getController();
         uint256 length = names.length;
         for (uint256 i = 0; i < length; ) {
             IPriceOracle.Price memory price = controller.rentPrice(
@@ -53,7 +53,7 @@ contract BulkRenewal is IBulkRenewal {
         string[] calldata names,
         uint256 duration
     ) external payable override {
-        ETHRegistrarController controller = getController();
+        LAMBRegistrarController controller = getController();
         uint256 length = names.length;
         uint256 total;
         for (uint256 i = 0; i < length; ) {

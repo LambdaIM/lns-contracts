@@ -9,8 +9,8 @@ async function main() {
   console.log(`deployer\t${deployer}`)
   console.log(`owner\t\t${owner}`)
   console.log(`=========================================================`)
-  const registry = await ethers.getContract('ENSRegistry', owner)
-  console.log(`ENSRegistry\t\t\t${registry.address}`)
+  const registry = await ethers.getContract('LNSRegistry', owner)
+  console.log(`LNSRegistry\t\t\t${registry.address}`)
   const reverse = await ethers.getContract('ReverseRegistrar', owner)
   console.log(
     `ReverseRegistrar\t\t${reverse.address}\tOwner ${await reverse.owner()}`,
@@ -24,17 +24,17 @@ async function main() {
       registrar.address
     }\tOwner ${await registrar.owner()}`,
   )
-  const lambOracle = await ethers.getContract('LambPriceOracle', owner)
+  const lambOracle = await ethers.getContract('LAMBPriceOracle', owner)
   console.log(
-    `LambPriceOracle\t\t\t${
+    `LAMBPriceOracle\t\t\t${
       lambOracle.address
     }\tOwner ${await lambOracle.owner()}`,
   )
   const stableOracle = await ethers.getContract('StablePriceOracle', owner)
   console.log(`StablePriceOracle\t\t${stableOracle.address}`)
-  const controller = await ethers.getContract('ETHRegistrarController', owner)
+  const controller = await ethers.getContract('LAMBRegistrarController', owner)
   console.log(
-    `ETHRegistrarController\t\t${
+    `LAMBRegistrarController\t\t${
       controller.address
     }\tOwner ${await controller.owner()}`,
   )
@@ -42,9 +42,9 @@ async function main() {
   console.log(`PublicResolver\t\t\t${resolver.address}`)
   console.log(`=========================================================`)
   console.log(
-    `[eth]\t\towner (${await registry.owner(
-      namehash('eth'),
-    )}) resolver (${await registry.resolver(namehash('eth'))})`,
+    `[lamb]\t\towner (${await registry.owner(
+      namehash('lamb'),
+    )}) resolver (${await registry.resolver(namehash('lamb'))})`,
   )
   console.log(
     `[reverse]\towner (${await registry.owner(
@@ -62,16 +62,16 @@ async function main() {
     )}) resolver (${await registry.resolver(namehash('resolver'))})`,
   )
   console.log(
-    `[resolver.eth]\towner (${await registry.owner(
-      namehash('resolver.eth'),
-    )}) resolver (${await registry.resolver(namehash('resolver.eth'))})`,
+    `[resolver.lamb]\towner (${await registry.owner(
+      namehash('resolver.lamb'),
+    )}) resolver (${await registry.resolver(namehash('resolver.lamb'))})`,
   )
   console.log(
-    `[lambda.eth]\towner (${await registry.owner(
-      namehash('lambda.eth'),
-    )}) resolver (${await registry.resolver(namehash('lambda.eth'))})`,
+    `[test.lamb]\towner (${await registry.owner(
+      namehash('test.lamb'),
+    )}) resolver (${await registry.resolver(namehash('test.lamb'))})`,
   )
-  const name = 'lambda'
+  const name = 'test'
   const label = '0x' + keccak256(utils.toUtf8Bytes(name))
   const tokenId = ethers.BigNumber.from(label)
   const nftOwner = await registrar.ownerOf(tokenId)

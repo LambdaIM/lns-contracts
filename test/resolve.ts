@@ -4,8 +4,8 @@ import { namehash } from 'ethers/lib/utils'
 async function main() {
   const { getNamedAccounts } = require('hardhat')
   const { owner } = await getNamedAccounts()
-  const registry = await ethers.getContract('ENSRegistry', owner)
-  const domain = 'lambda.eth'
+  const registry = await ethers.getContract('LNSRegistry', owner)
+  const domain = 'test.lamb'
   const resolver = await registry.resolver(namehash(domain))
   console.log(`resolver of ${domain} ${resolver}`)
   const resolverContract = (

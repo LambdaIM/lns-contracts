@@ -10,13 +10,13 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
   const { deploy } = deployments
   const { deployer, owner } = await getNamedAccounts()
 
-  await deploy('ENSRegistry', {
+  await deploy('LNSRegistry', {
     from: deployer,
     args: [],
     log: true,
   })
 
-  const registry = await ethers.getContract('ENSRegistry')
+  const registry = await ethers.getContract('LNSRegistry')
   const rootOwner = await registry.owner(ZERO_HASH)
   switch (rootOwner) {
     case deployer:
@@ -33,7 +33,7 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
         `WARNING: ENS registry root is owned by ${rootOwner}; cannot transfer to owner`,
       )
   }
-  console.log(`ENSRegistry deployed at (addr: ${registry.address})`)
+  console.log(`LNSRegistry deployed at (addr: ${registry.address})`)
 
   return true
 }

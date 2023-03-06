@@ -7,20 +7,20 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
   const { deploy } = deployments
   const { deployer, owner } = await getNamedAccounts()
 
-  const lambOracle = await deploy('LambPriceOracle', {
+  const lambOracle = await deploy('LAMBPriceOracle', {
     from: deployer,
     args: ['2121000'], // Gwei
     log: true,
   })
   if (owner !== deployer) {
-    const loc = await ethers.getContract('LambPriceOracle', deployer)
+    const loc = await ethers.getContract('LAMBPriceOracle', deployer)
     const tx = await loc.transferOwnership(owner)
     console.log(
-      `Transferring ownership of LambPriceOracle to ${owner} (tx: ${tx.hash})...`,
+      `Transferring ownership of LAMBPriceOracle to ${owner} (tx: ${tx.hash})...`,
     )
     await tx.wait()
   }
-  console.log(`LambPriceOracle deployed at (addr: ${lambOracle.address})`)
+  console.log(`LAMBPriceOracle deployed at (addr: ${lambOracle.address})`)
 
   const stableOracle = await deploy('StablePriceOracle', {
     from: deployer,

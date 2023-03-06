@@ -1,4 +1,4 @@
-import "../registry/ENS.sol";
+import "../registry/LNS.sol";
 import "./IBaseRegistrar.sol";
 import "@openzeppelin/contracts/token/ERC721/IERC721.sol";
 
