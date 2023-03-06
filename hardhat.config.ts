@@ -14,7 +14,7 @@ import './tasks/archive_scan'
 import './tasks/save'
 import './tasks/seed'
 
-dotenv.config({ path: '.env.test' })
+dotenv.config({ debug: false })
 
 let real_accounts = undefined
 if (process.env.DEPLOYER_KEY) {
@@ -35,7 +35,7 @@ const config: HardhatUserConfig = {
     },
     localhost: {
       url: 'http://127.0.0.1:8545',
-      saveDeployments: true,
+      saveDeployments: false,
       accounts: real_accounts,
     },
     testnet: {
