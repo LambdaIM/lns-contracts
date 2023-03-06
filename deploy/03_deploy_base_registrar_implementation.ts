@@ -15,7 +15,7 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
   const registry = await ethers.getContract('ENSRegistry')
   const bri = await deploy('BaseRegistrarImplementation', {
     from: deployer,
-    args: [registry.address, namehash('eth')],
+    args: [registry.address, namehash('lamb')],
     log: true,
   })
   if (!bri.newlyDeployed) return
@@ -30,25 +30,25 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
   // TEMP
   // const tx00 = await registry
   //     .connect(await ethers.getSigner(owner))
-  //     .setSubnodeOwner(ZERO_HASH, '0x' + keccak256('eth'), owner)
+  //     .setSubnodeOwner(ZERO_HASH, '0x' + keccak256('lamb'), owner)
   // await tx00.wait()
   // const tx01 = await registry
   //     .connect(await ethers.getSigner(owner))
-  //     .setSubnodeOwner(namehash('eth'), '0x' + keccak256('resolver'), owner)
+  //     .setSubnodeOwner(namehash('lamb'), '0x' + keccak256('resolver'), owner)
   // console.log(
-  //     `Setting owner of resolver.eth to owner on registry (tx: ${tx01.hash})...`
+  //     `Setting owner of resolver.lamb to owner on registry (tx: ${tx01.hash})...`
   // )
   // await tx01.wait()
   //
   // const tx02 = await registry
   //     .connect(await ethers.getSigner(owner))
-  //     .setOwner(namehash('eth'), registrar.address)
+  //     .setOwner(namehash('lamb'), registrar.address)
   // await tx02.wait()
   // END
 
   const tx2 = await registry
     .connect(await ethers.getSigner(owner))
-    .setSubnodeOwner(ZERO_HASH, '0x' + keccak256('eth'), registrar.address)
+    .setSubnodeOwner(ZERO_HASH, '0x' + keccak256('lamb'), registrar.address)
   console.log(
     `Setting owner of eth node to registrar on registry (tx: ${tx2.hash})...`,
   )
