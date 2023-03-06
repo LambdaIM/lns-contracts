@@ -1,10 +1,8 @@
-import { DeployFunction } from 'hardhat-deploy/types'
-import { HardhatRuntimeEnvironment } from 'hardhat/types'
 import { ethers } from 'hardhat'
 import { namehash } from 'ethers/lib/utils'
 
-const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
-  const { getNamedAccounts } = hre
+async function main() {
+  const { getNamedAccounts } = require('hardhat')
   const { owner } = await getNamedAccounts()
 
   const registry = await ethers.getContract('ENSRegistry', owner)
@@ -13,7 +11,7 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
   console.log(`TTL of ${domain} is ${ttl}`)
 }
 
-func(require('hardhat'))
+main()
   .then(() => process.exit(0))
   .catch((error) => {
     console.error(error)

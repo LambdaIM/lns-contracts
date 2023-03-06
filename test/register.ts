@@ -1,12 +1,11 @@
-import { DeployFunction } from 'hardhat-deploy/types'
-import { HardhatRuntimeEnvironment } from 'hardhat/types'
 import { ethers } from 'hardhat'
 import * as crypto from 'crypto'
 import { utils } from 'ethers'
 
 const DAY = 60 * 60 * 24
-const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
-  const { getNamedAccounts, network } = hre
+
+async function main() {
+  const { getNamedAccounts, network } = require('hardhat')
   const { owner } = await getNamedAccounts()
   const controller = await ethers.getContract('ETHRegistrarController', owner)
   const resolver = await ethers.getContract('PublicResolver', owner)
@@ -23,7 +22,6 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
   }
   const price = await controller.rentPrice(name, duration)
   console.log(`[price] base: ${price.base} premium: ${price.premium}`)
-  // const who = '0xDAfcc246Aac67e0406A70a74b9a70CeAe0F026Ad'
   const random = new Uint8Array(32)
   crypto.getRandomValues(random)
   const secret =
@@ -33,7 +31,7 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
       .join('')
   const commitment = await controller.makeCommitment(
     name,
-    owner.toString(),
+    owner,
     duration,
     secret,
     resolver.address,
@@ -72,7 +70,7 @@ function sleep(ms: number | undefined) {
   return new Promise((resolve) => setTimeout(resolve, ms))
 }
 
-func(require('hardhat'))
+main()
   .then(() => process.exit(0))
   .catch((error) => {
     console.error(error)

@@ -18,7 +18,7 @@ import './tasks/seed'
 // if this file is missing. dotenv will never modify any environment variables
 // that have already been set.
 // https://github.com/motdotla/dotenv
-dotenv.config({ path: '.env.lamb' })
+dotenv.config({ debug: false })
 
 let real_accounts = undefined
 if (process.env.DEPLOYER_KEY) {

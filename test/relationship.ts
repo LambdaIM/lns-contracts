@@ -1,12 +1,10 @@
-import { DeployFunction } from 'hardhat-deploy/types'
-import { HardhatRuntimeEnvironment } from 'hardhat/types'
 import { ethers } from 'hardhat'
 import { namehash } from 'ethers/lib/utils'
 import { keccak256 } from 'js-sha3'
 import { utils } from 'ethers'
 
-const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
-  const { getNamedAccounts } = hre
+async function main() {
+  const { getNamedAccounts } = require('hardhat')
   const { deployer, owner } = await getNamedAccounts()
   console.log(`deployer\t${deployer}`)
   console.log(`owner\t\t${owner}`)
@@ -80,7 +78,7 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
   console.log(`The owner of NFT from ${name} is ${nftOwner}`)
 }
 
-func(require('hardhat'))
+main()
   .then(() => process.exit(0))
   .catch((error) => {
     console.error(error)

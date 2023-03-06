@@ -1,11 +1,9 @@
-import { DeployFunction } from 'hardhat-deploy/types'
-import { HardhatRuntimeEnvironment } from 'hardhat/types'
 import { ethers } from 'hardhat'
 import { keccak256 } from 'js-sha3'
 import { utils } from 'ethers'
 
-const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
-  const { getNamedAccounts } = hre
+async function main() {
+  const { getNamedAccounts } = require('hardhat')
   const { deployer, owner } = await getNamedAccounts()
 
   const registrar = await ethers.getContract(
@@ -46,7 +44,7 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
   // )
 }
 
-func(require('hardhat'))
+main()
   .then(() => process.exit(0))
   .catch((error) => {
     console.error(error)
