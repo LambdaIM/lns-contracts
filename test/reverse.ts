@@ -1,4 +1,4 @@
-import { ethers } from 'hardhat'
+import { ethers, getNamedAccounts } from 'hardhat'
 import { namehash } from 'ethers/lib/utils'
 
 async function main() {
@@ -11,7 +11,7 @@ async function main() {
   const resolverContract = (
     await ethers.getContractAt('PublicResolver', resolver)
   ).connect(await ethers.getSigner(owner))
-  const addr = await resolverContract['addr(bytes32)'](namehash(domain))
+  const addr = await resolverContract['name(bytes32)'](namehash(domain))
   console.log(`${domain} ==>> ${addr}`)
 }
 

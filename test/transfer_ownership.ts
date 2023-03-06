@@ -11,8 +11,8 @@ async function main() {
     owner,
   )
 
-  // test.lamb
-  const name = 'test'
+  // lambda.lamb
+  const name = 'lambda'
   const label = '0x' + keccak256(utils.toUtf8Bytes(name))
   const tokenId = ethers.BigNumber.from(label)
   const oldOwner = await registrar['ownerOf(uint256)'](tokenId)

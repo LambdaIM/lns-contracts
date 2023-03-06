@@ -9,7 +9,7 @@ async function main() {
   const { owner } = await getNamedAccounts()
   const controller = await ethers.getContract('LAMBRegistrarController', owner)
   const resolver = await ethers.getContract('PublicResolver', owner)
-  const name = 'test'
+  const name = 'lambda'
   if (!(await controller.available(name))) {
     console.error(`The name ${name} is unavailable`)
     return
@@ -32,7 +32,7 @@ async function main() {
     duration,
     secret,
     resolver.address,
-    false,
+    true,
   )
   console.log(`Commitment: ${commitment}`)
   const tx = await controller.commit(commitment)
@@ -47,7 +47,7 @@ async function main() {
       duration,
       secret,
       resolver.address,
-      false,
+      true,
       { value: utils.parseEther('200') },
     )
     console.log(`Registering ${name} to ${owner} (tx: ${tx1.hash})...`)

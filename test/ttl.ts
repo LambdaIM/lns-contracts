@@ -6,7 +6,7 @@ async function main() {
   const { owner } = await getNamedAccounts()
 
   const registry = await ethers.getContract('LNSRegistry', owner)
-  const domain = 'test.lamb'
+  const domain = 'lambda.lamb'
   const ttl = await registry.ttl(namehash(domain))
   console.log(`TTL of ${domain} is ${ttl}`)
 }

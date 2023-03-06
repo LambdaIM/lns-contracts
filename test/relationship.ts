@@ -66,16 +66,20 @@ async function main() {
       namehash('resolver.lamb'),
     )}) resolver (${await registry.resolver(namehash('resolver.lamb'))})`,
   )
+  const domain = 'lambda.lamb'
+  const nameOwner = await registry.resolver(namehash('lambda.lamb'))
   console.log(
-    `[test.lamb]\towner (${await registry.owner(
-      namehash('test.lamb'),
-    )}) resolver (${await registry.resolver(namehash('test.lamb'))})`,
+    `[${domain}]\towner (${await registry.owner(
+      namehash(domain),
+    )}) resolver (${nameOwner})`,
   )
-  const name = 'test'
-  const label = '0x' + keccak256(utils.toUtf8Bytes(name))
-  const tokenId = ethers.BigNumber.from(label)
-  const nftOwner = await registrar.ownerOf(tokenId)
-  console.log(`The owner of NFT from ${name} is ${nftOwner}`)
+  if (nameOwner !== '0x0000000000000000000000000000000000000000') {
+    const name = 'lambda'
+    const label = '0x' + keccak256(utils.toUtf8Bytes(name))
+    const tokenId = ethers.BigNumber.from(label)
+    const nftOwner = await registrar.ownerOf(tokenId)
+    console.log(`The owner of NFT from ${name} is ${nftOwner}`)
+  }
 }
 
 main()

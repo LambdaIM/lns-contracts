@@ -6,7 +6,7 @@ async function main() {
   const { deployer, owner } = await getNamedAccounts()
   const registry = await ethers.getContract('LNSRegistry', owner)
 
-  const name = 'test.lamb'
+  const name = 'lambda.lamb'
   const oldOwner = await registry.owner(namehash(name))
   console.log(`The owner of ${name} is ${oldOwner}`)
   const tx = await registry.setOwner(namehash(name), deployer)
