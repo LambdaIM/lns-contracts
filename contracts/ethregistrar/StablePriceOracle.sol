@@ -24,8 +24,6 @@ contract StablePriceOracle is IPriceOracle {
     // Oracle address
     AggregatorInterface public immutable usdOracle;
 
-    event RentPriceChanged(uint256[] prices);
-
     constructor(AggregatorInterface _usdOracle, uint256[] memory _rentPrices) {
         usdOracle = _usdOracle;
         price1Letter = _rentPrices[0];

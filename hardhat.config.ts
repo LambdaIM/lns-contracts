@@ -1,5 +1,3 @@
-import { exec as _exec } from 'child_process'
-
 import '@nomiclabs/hardhat-ethers'
 import '@nomiclabs/hardhat-solhint'
 import '@nomiclabs/hardhat-truffle5'
@@ -8,13 +6,8 @@ import dotenv from 'dotenv'
 import 'hardhat-abi-exporter'
 import 'hardhat-deploy'
 import 'hardhat-gas-reporter'
-import { HardhatUserConfig, task } from 'hardhat/config'
-import { Artifact } from 'hardhat/types'
-import { promisify } from 'util'
+import { HardhatUserConfig } from 'hardhat/config'
 import 'hardhat-contract-sizer'
-
-const exec = promisify(_exec)
-
 // hardhat actions
 import './tasks/accounts'
 import './tasks/archive_scan'
@@ -25,7 +18,7 @@ import './tasks/seed'
 // if this file is missing. dotenv will never modify any environment variables
 // that have already been set.
 // https://github.com/motdotla/dotenv
-dotenv.config({ debug: false })
+dotenv.config({ path: '.env.lamb' })
 
 let real_accounts = undefined
 if (process.env.DEPLOYER_KEY) {
@@ -42,36 +35,24 @@ const config: HardhatUserConfig = {
   networks: {
     hardhat: {
       saveDeployments: false,
-      tags: ['test', 'legacy', 'use_root'],
       allowUnlimitedContractSize: false,
     },
     localhost: {
       url: 'http://127.0.0.1:8545',
-      saveDeployments: false,
-      tags: ['test', 'legacy', 'use_root'],
+      saveDeployments: true,
+      accounts: [
+        '0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80',
+        '0x59c6995e998f97a5a0044966f0945389dc9e86dae88c7a8412f4603b6b78690d',
+      ],
     },
-    rinkeby: {
-      url: `https://rinkeby.infura.io/v3/${process.env.INFURA_API_KEY}`,
-      tags: ['test', 'legacy', 'use_root'],
-      chainId: 4,
-      accounts: real_accounts,
-    },
-    ropsten: {
-      url: `https://ropsten.infura.io/v3/${process.env.INFURA_API_KEY}`,
-      tags: ['test', 'legacy', 'use_root'],
-      chainId: 3,
-      accounts: real_accounts,
-    },
-    goerli: {
-      url: `https://goerli.infura.io/v3/${process.env.INFURA_API_KEY}`,
-      tags: ['test', 'legacy', 'use_root'],
-      chainId: 5,
+    testnet: {
+      url: `https://evm.lambda.top`,
+      chainId: 92001,
       accounts: real_accounts,
     },
     mainnet: {
-      url: `https://mainnet.infura.io/v3/${process.env.INFURA_API_KEY}`,
-      tags: ['legacy', 'use_root'],
-      chainId: 1,
+      url: `https://evm.lambda.im`,
+      chainId: 92000,
       accounts: real_accounts,
     },
   },

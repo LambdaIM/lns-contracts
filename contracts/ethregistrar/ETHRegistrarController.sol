@@ -10,7 +10,6 @@ import {IETHRegistrarController, IPriceOracle} from "./IETHRegistrarController.s
 import {Ownable} from "@openzeppelin/contracts/access/Ownable.sol";
 import {IERC165} from "@openzeppelin/contracts/utils/introspection/IERC165.sol";
 import {Address} from "@openzeppelin/contracts/utils/Address.sol";
-import {INameWrapper} from "../wrapper/INameWrapper.sol";
 import {ERC20Recoverable} from "../utils/ERC20Recoverable.sol";
 
 error CommitmentTooNew(bytes32 commitment);
@@ -36,7 +35,8 @@ contract ETHRegistrarController is
     using StringUtils for *;
     using Address for address;
 
-    uint256 public constant MIN_REGISTRATION_DURATION = 28 days;
+    //    uint256 public constant MIN_REGISTRATION_DURATION = 28 days;
+    uint256 public constant MIN_REGISTRATION_DURATION = 60 seconds;
     bytes32 private constant ETH_NODE =
         0x93cdeb708b7545dc668eb9280176169d1c33cfd8ed6f04690a0bcc88a93fc4ae;
     uint64 private constant MAX_EXPIRY = type(uint64).max;
@@ -45,7 +45,6 @@ contract ETHRegistrarController is
     uint256 public immutable minCommitmentAge;
     uint256 public immutable maxCommitmentAge;
     ReverseRegistrar public immutable reverseRegistrar;
-    INameWrapper public immutable nameWrapper;
 
     mapping(bytes32 => uint256) public commitments;
 
@@ -69,8 +68,7 @@ contract ETHRegistrarController is
         IPriceOracle _prices,
         uint256 _minCommitmentAge,
         uint256 _maxCommitmentAge,
-        ReverseRegistrar _reverseRegistrar,
-        INameWrapper _nameWrapper
+        ReverseRegistrar _reverseRegistrar
     ) {
         if (_maxCommitmentAge <= _minCommitmentAge) {
             revert MaxCommitmentAgeTooLow();
@@ -85,7 +83,6 @@ contract ETHRegistrarController is
         minCommitmentAge = _minCommitmentAge;
         maxCommitmentAge = _maxCommitmentAge;
         reverseRegistrar = _reverseRegistrar;
-        nameWrapper = _nameWrapper;
     }
 
     function rentPrice(
@@ -111,14 +108,11 @@ contract ETHRegistrarController is
         uint256 duration,
         bytes32 secret,
         address resolver,
-        bytes[] calldata data,
-        bool reverseRecord,
-        uint16 ownerControlledFuses
+        bool reverseRecord
     ) public pure override returns (bytes32) {
+        require(resolver != address(0));
         bytes32 label = keccak256(bytes(name));
-        if (data.length > 0 && resolver == address(0)) {
-            revert ResolverRequiredWhenDataSupplied();
-        }
+
         return
             keccak256(
                 abi.encode(
@@ -127,9 +121,7 @@ contract ETHRegistrarController is
                     duration,
                     secret,
                     resolver,
-                    data,
-                    reverseRecord,
-                    ownerControlledFuses
+                    reverseRecord
                 )
             );
     }
@@ -147,9 +139,7 @@ contract ETHRegistrarController is
         uint256 duration,
         bytes32 secret,
         address resolver,
-        bytes[] calldata data,
-        bool reverseRecord,
-        uint16 ownerControlledFuses
+        bool reverseRecord
     ) public payable override {
         IPriceOracle.Price memory price = rentPrice(name, duration);
         if (msg.value < price.base + price.premium) {
@@ -165,23 +155,11 @@ contract ETHRegistrarController is
                 duration,
                 secret,
                 resolver,
-                data,
-                reverseRecord,
-                ownerControlledFuses
+                reverseRecord
             )
         );
 
-        uint256 expires = nameWrapper.registerAndWrapETH2LD(
-            name,
-            owner,
-            duration,
-            resolver,
-            ownerControlledFuses
-        );
-
-        if (data.length > 0) {
-            _setRecords(resolver, keccak256(bytes(name)), data);
-        }
+        uint256 expires = _register(name, owner, duration, resolver);
 
         if (reverseRecord) {
             _setReverseRecord(name, resolver, msg.sender);
@@ -203,6 +181,26 @@ contract ETHRegistrarController is
         }
     }
 
+    function _register(
+        string calldata name,
+        address owner,
+        uint256 duration,
+        address resolver
+    ) internal returns (uint256 expires) {
+        bytes32 label = keccak256(bytes(name));
+        uint256 tokenId = uint256(label);
+
+        expires = base.register(tokenId, address(this), duration);
+
+        bytes32 nodehash = keccak256(abi.encodePacked(base.baseNode(), label));
+        base.ens().setResolver(nodehash, resolver);
+        if (owner != address(0)) {
+            Resolver(resolver).setAddr(nodehash, owner);
+        }
+        base.reclaim(tokenId, owner);
+        base.transferFrom(address(this), owner, tokenId);
+    }
+
     function renew(
         string calldata name,
         uint256 duration
@@ -213,7 +211,7 @@ contract ETHRegistrarController is
         if (msg.value < price.base) {
             revert InsufficientValue();
         }
-        uint256 expires = nameWrapper.renew(tokenId, duration);
+        uint256 expires = base.renew(tokenId, duration);
 
         if (msg.value > price.base) {
             payable(msg.sender).transfer(msg.value - price.base);
@@ -222,7 +220,7 @@ contract ETHRegistrarController is
         emit NameRenewed(name, labelhash, msg.value, expires);
     }
 
-    function withdraw() public {
+    function withdraw() public onlyOwner {
         payable(owner()).transfer(address(this).balance);
     }
 

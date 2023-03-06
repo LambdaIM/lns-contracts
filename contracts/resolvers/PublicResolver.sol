@@ -12,7 +12,6 @@ import "./profiles/PubkeyResolver.sol";
 import "./profiles/TextResolver.sol";
 import "./profiles/ExtendedResolver.sol";
 import "./Multicallable.sol";
-import "../wrapper/INameWrapper.sol";
 
 /**
  * A simple resolver anyone can use; only allows the owner of a node to set its
@@ -31,7 +30,6 @@ contract PublicResolver is
     ExtendedResolver
 {
     ENS immutable ens;
-    INameWrapper immutable nameWrapper;
     address immutable trustedETHController;
     address immutable trustedReverseRegistrar;
 
@@ -69,12 +67,10 @@ contract PublicResolver is
 
     constructor(
         ENS _ens,
-        INameWrapper wrapperAddress,
         address _trustedETHController,
         address _trustedReverseRegistrar
     ) {
         ens = _ens;
-        nameWrapper = wrapperAddress;
         trustedETHController = _trustedETHController;
         trustedReverseRegistrar = _trustedReverseRegistrar;
     }
@@ -131,9 +127,6 @@ contract PublicResolver is
             return true;
         }
         address owner = ens.owner(node);
-        if (owner == address(nameWrapper)) {
-            owner = nameWrapper.ownerOf(uint256(node));
-        }
         return
             owner == msg.sender ||
             isApprovedForAll(owner, msg.sender) ||

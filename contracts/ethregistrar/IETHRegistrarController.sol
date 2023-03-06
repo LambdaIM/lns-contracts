@@ -17,9 +17,7 @@ interface IETHRegistrarController {
         uint256,
         bytes32,
         address,
-        bytes[] calldata,
-        bool,
-        uint16
+        bool
     ) external pure returns (bytes32);
 
     function commit(bytes32) external;
@@ -30,9 +28,7 @@ interface IETHRegistrarController {
         uint256,
         bytes32,
         address,
-        bytes[] calldata,
-        bool,
-        uint16
+        bool
     ) external payable;
 
     function renew(string calldata, uint256) external payable;
