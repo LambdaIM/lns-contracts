@@ -30,7 +30,7 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
       break
     default:
       console.log(
-        `WARNING: ENS registry root is owned by ${rootOwner}; cannot transfer to owner`,
+        `WARNING: LNS registry root is owned by ${rootOwner}; cannot transfer to owner`,
       )
   }
   console.log(`LNSRegistry deployed at (addr: ${registry.address})`)
