@@ -6,12 +6,15 @@ import "@openzeppelin/contracts/access/Ownable.sol";
 contract LAMBPriceOracle is Ownable {
     int256 value;
 
+    event PriceUpdated(int256);
+
     constructor(int256 _value) {
         set(_value);
     }
 
     function set(int256 _value) public onlyOwner {
         value = _value;
+        emit PriceUpdated(_value);
     }
 
     function latestAnswer() public view returns (int256) {
