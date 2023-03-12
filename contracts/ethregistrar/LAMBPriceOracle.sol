@@ -11,19 +11,15 @@ contract LAMBPriceOracle is Ownable {
     event PriceUpdated(int256);
 
     modifier valid(int256 _value) {
-        require(0 < _value, "Invalid LAMB price");
+        require(0 < _value, "Invalid value");
         _;
     }
 
     constructor(int256 _value) {
-        set(_value);
+        value = _value;
     }
 
     function calibrate(int256 _value) internal view returns (int256) {
-        if (0 == value) {
-            return _value;
-        }
-
         int256 margin = (value * deviation) / 100;
         int256 diff = _value - value;
 
@@ -38,8 +34,13 @@ contract LAMBPriceOracle is Ownable {
     }
 
     function set(int256 _value) public onlyOwner valid(_value) {
-        value = calibrate(_value);
-        emit PriceUpdated(value);
+        _value = calibrate(_value);
+        updatePrice(_value);
+    }
+
+    function updatePrice(int256 _value) internal valid(_value) {
+        value = _value;
+        emit PriceUpdated(_value);
     }
 
     function latestAnswer() public view returns (int256) {
