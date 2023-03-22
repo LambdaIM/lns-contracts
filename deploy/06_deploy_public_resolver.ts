@@ -54,8 +54,8 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
 func.id = 'resolver'
 func.tags = ['PublicResolver']
 func.dependencies = [
-  'ENSRegistry',
-  'ETHRegistrarController',
+  'LNSRegistry',
+  'LAMBRegistrarController',
   'ReverseRegistrar',
 ]
 
