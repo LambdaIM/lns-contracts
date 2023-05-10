@@ -1,6 +1,6 @@
-import { DeployFunction } from 'hardhat-deploy/types'
-import { HardhatRuntimeEnvironment } from 'hardhat/types'
-import { ethers } from 'hardhat'
+import {DeployFunction} from 'hardhat-deploy/types'
+import {HardhatRuntimeEnvironment} from 'hardhat/types'
+import {ethers} from 'hardhat'
 
 const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
   const { getNamedAccounts, deployments } = hre
@@ -9,7 +9,7 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
 
   const lambOracle = await deploy('LAMBPriceOracle', {
     from: deployer,
-    args: ['2121000'], // Gwei
+    args: ['138800'], // 1e8
     log: true,
   })
   if (owner !== deployer) {
@@ -26,7 +26,7 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
     from: deployer,
     args: [
       lambOracle.address,
-      [0, 0, 4056630527995, 1014157631999, 31692426000],
+      [0, 0, 3169242627000, 316924263000, 63384853000], // [0, 0, 100, 10, 2]USD (1e18)
     ],
     log: true,
   })
