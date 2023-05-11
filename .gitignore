@@ -6,3 +6,7 @@ gasreport-*
 *.DS_Store
 build
 forge-cache
+deployments/localhost/
+!/.husky/pre-commit
+!/.env.dev
+!/.env.test

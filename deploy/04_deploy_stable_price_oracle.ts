@@ -9,7 +9,7 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
 
   const lambOracle = await deploy('LAMBPriceOracle', {
     from: deployer,
-    args: ['138800'], // 1e8
+    args: ['163400'], // 1e8
     log: true,
   })
   if (owner !== deployer) {
@@ -26,7 +26,7 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
     from: deployer,
     args: [
       lambOracle.address,
-      [0, 0, 3169242627000, 316924263000, 63384853000], // [0, 0, 100, 10, 2]USD (1e18)
+      [0, 0, 3169242627000, 316924263000, 31709792000], // [0, 0, 100, 10, 1]USD (1e18)
     ],
     log: true,
   })

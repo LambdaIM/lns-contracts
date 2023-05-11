@@ -48,13 +48,13 @@ async function main() {
       secret,
       resolver.address,
       true,
-      { value: utils.parseEther('200') },
+      { value: utils.parseEther('2') },
     )
     console.log(`Registering ${name} to ${owner} (tx: ${tx1.hash})...`)
     await tx1.wait()
-  }, 61000)
+  }, 10000)
 
-  await sleep(70000)
+  await sleep(15000)
 }
 
 function sleep(ms: number | undefined) {
